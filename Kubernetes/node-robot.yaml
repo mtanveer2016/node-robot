@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: node-robot
+  name: node-robot
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: node-robot
+  template:
+    metadata:
+      labels:
+        app: node-robot
+    spec:
+      containers:
+      - name: node-robot
+        image: 82mtanveer/myrepo:node-robot_v1 
+        imagePullPolicy: Always
+        ports:
+        - name: nodeport
+          containerPort: 3001
+          protocol: TCP
+        resources:
+          limits:
+            cpu: "500m"
+            memory: "512Mi"
+          requests:
+            cpu: "250m"
+            memory: "256Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: node-robot
+  labels:
+    app: node-robot
+spec:
+  selector:
+    app: node-robot
+  ports:
+  - name: node-robot
+    protocol: TCP
+    port: 3001
+    targetPort: nodeport
+  type: LoadBalancer
